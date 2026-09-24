@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GameVerse — Crea, publica y descubre juegos</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+:root{
+  --bg:#080812;
+  --panel:#11111f;
+  --panel2:#17172a;
+  --purple:#8b5cf6;
+  --pink:#ec4899;
+  --cyan:#22d3ee;
+  --text:#f8fafc;
+  --muted:#a1a1b5;
+  --border:rgba(255,255,255,.08);
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at 10% 10%,rgba(139,92,246,.16),transparent 30%),
+    radial-gradient(circle at 90% 20%,rgba(34,211,238,.10),transparent 30%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(8,8,18,.88);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid var(--border);
+}
+
+.nav{
+  max-width:1200px;
+  margin:auto;
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:12px 20px;
+}
+
+.logo{
+  font-size:25px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.logo span{
+  background:linear-gradient(90deg,var(--purple),var(--pink),var(--cyan));
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.search{
+  flex:1;
+  position:relative;
+}
+
+.search input{
+  width:100%;
+  background:#10101d;
+  border:1px solid var(--border);
+  color:white;
+  border-radius:14px;
+  padding:13px 16px 13px 42px;
+  outline:none;
+}
+
+.search input:focus{
+  border-color:var(--purple);
+}
+
+.search-icon{
+  position:absolute;
+  left:15px;
+  top:12px;
+}
+
+.nav-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:11px 16px;
+  color:white;
+  background:var(--panel2);
+  border:1px solid var(--border);
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(139,92,246,.7);
+}
+
+.primary{
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  border:0;
+  font-weight:bold;
+}
+
+.hero{
+  max-width:1200px;
+  margin:auto;
+  padding:70px 20px 35px;
+}
+
+.hero-box{
+  min-height:370px;
+  border-radius:28px;
+  padding:45px;
+  display:flex;
+  align-items:center;
+  background:
+    linear-gradient(90deg,rgba(9,9,20,.96),rgba(9,9,20,.65),rgba(9,9,20,.25)),
+    linear-gradient(135deg,#21134b,#152d44);
+  border:1px solid var(--border);
+  overflow:hidden;
+  position:relative;
+}
+
+.hero-box:after{
+  content:"";
+  position:absolute;
+  width:300px;
+  height:300px;
+  right:-80px;
+  bottom:-120px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  filter:blur(50px);
+  opacity:.35;
+}
+
+.hero-content{
+  max-width:650px;
+  position:relative;
+  z-index:2;
+}
+
+.badge{
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:30px;
+  background:rgba(139,92,246,.16);
+  border:1px solid rgba(139,92,246,.35);
+  color:#c4b5fd;
+  font-size:13px;
+  margin-bottom:18px;
+}
+
+.hero h1{
+  font-size:clamp(38px,6vw,70px);
+  line-height:.98;
+  margin-bottom:20px;
+}
+
+.gradient{
+  background:linear-gradient(90deg,#c4b5fd,#f9a8d4,#67e8f9);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+
+.hero p{
+  color:#c4c4d4;
+  font-size:18px;
+  line-height:1.6;
+  margin-bottom:25px;
+}
+
+.section{
+  max-width:1200px;
+  margin:auto;
+  padding:30px 20px;
+}
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+
+.section-title h2{
+  font-size:25px;
+}
+
+.section-title span{
+  color:var(--muted);
+  font-size:14px;
+}
+
+.categories{
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding-bottom:10px;
+}
+
+.category{
+  flex:none;
+  padding:11px 16px;
+  border-radius:30px;
+  background:var(--panel);
+  color:#ddd;
+  border:1px solid var(--border);
+}
+
+.category.active,
+.category:hover{
+  background:linear-gradient(135deg,var(--purple),var(--pink));
+  color:white;
+}
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.card{
+  background:linear-gradient(145deg,#121220,#0d0d18);
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  transition:.25s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(139,92,246,.5);
+  box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+.cover{
+  height:190px;
+  background-size:cover;
+  background-position:center;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.cover:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(transparent 40%,rgba(0,0,0,.7));
+}
+
+.play{
+  position:relative;
+  z-index:2;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:0;
+  background:rgba(255,255,255,.9);
+  font-size:20px;
+  opacity:0;
+  transition:.2s;
+}
+
+.card:hover .play{
+  opacity:1;
+}
+
+.card-body{
+  padding:16px;
+}
+
+.card-title{
+  font-size:19px;
+  font-weight:bold;
+  margin-bottom:7px;
+}
+
+.creator{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:13px;
+}
+
+.tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:14px;
+}
+
+.tag{
+  padding:5px 8px;
+  border-radius:7px;
+  background:#1d1d30;
+  color:#bbb;
+  font-size:11px;
+}
+
+.card-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.likes{
+  color:#f472b6;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(0,0,0,.78);
+  backdrop-filter:blur(8px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:min(700px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#10101d;
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:25px;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close{
+  border:0;
+  background:#222238;
+  color:white;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+}
+
+.form-group{
+  margin-bottom:16px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:7px;
+  color:#ddd;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+  width:100%;
+  background:#090912;
+  border:1px solid var(--border);
+  color:white;
+  border-radius:12px;
+  padding:13px;
+  outline:none;
+}
+
+.form-group textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.preview{
+  width:100%;
+  height:170px;
+  border-radius:14px;
+  object-fit:cover;
+  display:none;
+  margin-top:10px;
+}
+
+.details-cover{
+  width:100%;
+  height:280px;
+  object-fit:cover;
+  border-radius:16px;
+}
+
+.details h2{
+  font-size:30px;
+  margin:18px 0 8px;
+}
+
+.details p{
+  color:#bbb;
+  line-height:1.7;
+  margin:15px 0;
+}
+
+.trailer{
+  width:100%;
+  border-radius:14px;
+  margin-top:15px;
+  background:#000;
+}
+
+.comments{
+  margin-top:25px;
+}
+
+.comment{
+  padding:13px;
+  background:#171727;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+.comment strong{
+  color:#c4b5fd;
+}
+
+.comment p{
+  margin:5px 0 0;
+  font-size:14px;
+}
+
+footer{
+  margin-top:50px;
+  padding:40px 20px;
+  border-top:1px solid var(--border);
+  text-align:center;
+  color:#777;
+}
+
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:50px;
+  color:#888;
+}
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:200;
+  background:#19192b;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px 18px;
+  display:none;
+}
+
+.toast.show{
+  display:block;
+}
+
+@media(max-width:850px){
+  .games{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .nav{
+    flex-wrap:wrap;
+  }
+
+  .search{
+    order:3;
+    flex-basis:100%;
+  }
+
+  .hero-box{
+    padding:30px;
+  }
+}
+
+@media(max-width:600px){
+  .games{
+    grid-template-columns:1fr;
+  }
+
+  .hero{
+    padding-top:35px;
+  }
+
+  .hero-box{
+    min-height:430px;
+    padding:25px;
+  }
+
+  .hero h1{
+    font-size:42px;
+  }
+
+  .nav-buttons .btn span{
+    display:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+
+    <div class="logo">
+      🎮 <span>GameVerse</span>
+    </div>
+
+    <div class="search">
+      <span class="search-icon">🔎</span>
+      <input id="searchInput" type="text"
+      placeholder="Buscar juegos, creadores o géneros...">
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn" onclick="scrollToGames()">Explorar</button>
+      <button class="btn primary" onclick="openPublish()">＋ Publicar</button>
+    </div>
+
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+
+  <div class="hero-box">
+
+    <div class="hero-content">
+
+      <div class="badge">🚀 La comunidad para creadores de videojuegos</div>
+
+      <h1>
+        Crea.<br>
+        <span class="gradient">Publica.</span><br>
+        Juega.
+      </h1>
+
+      <p>
+        Descubre juegos increíbles creados por personas de todo el mundo,
+        comparte tus propias creaciones y forma parte de una nueva comunidad
+        de desarrolladores.
+      </p>
+
+      <button class="btn primary" onclick="openPublish()">
+        🎮 Publicar mi juego
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="section">
+
+  <div class="section-title">
+    <h2>Explora por categoría</h2>
+    <span>Encuentra tu próximo juego</span>
+  </div>
+
+  <div class="categories" id="categories">
+
+    <button class="category active" onclick="filterCategory('Todos',this)">
+      Todos
+    </button>
+
+    <button class="category" onclick="filterCategory('Acción',this)">
+      ⚔️ Acción
+    </button>
+
+    <button class="category" onclick="filterCategory('Aventura',this)">
+      🗺️ Aventura
+    </button>
+
+    <button class="category" onclick="filterCategory('Terror',this)">
+      👻 Terror
+    </button>
+
+    <button class="category" onclick="filterCategory('RPG',this)">
+      🧙 RPG
+    </button>
+
+    <button class="category" onclick="filterCategory('Plataformas',this)">
+      🏃 Plataformas
+    </button>
+
+    <button class="category" onclick="filterCategory('Puzzle',this)">
+      🧩 Puzzle
+    </button>
+
+  </div>
+
+</section>
+
+<section class="section" id="gamesSection">
+
+  <div class="section-title">
+    <h2>🔥 Juegos de la comunidad</h2>
+    <span id="gameCount"></span>
+  </div>
+
+  <div class="games" id="games"></div>
+
+</section>
+
+</main>
+
+<footer>
+  <strong>🎮 GameVerse</strong>
+  <p style="margin-top:8px">
+    Una comunidad creada para que todos puedan crear y compartir.
+  </p>
+  <p style="margin-top:15px;font-size:12px">
+    Esta versión utiliza almacenamiento local del navegador.
+  </p>
+</footer>
+
+<!-- PUBLICAR -->
+
+<div class="modal" id="publishModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h2>🚀 Publicar juego</h2>
+      <button class="close" onclick="closeModal('publishModal')">×</button>
+    </div>
+
+    <div class="form-group">
+      <label>Nombre del juego</label>
+      <input id="gameName" placeholder="Ej: Galaxy Warriors">
+    </div>
+
+    <div class="form-group">
+      <label>Tu nombre / creador</label>
+      <input id="gameCreator" placeholder="Ej: LauraGames">
+    </div>
+
+    <div class="form-group">
+      <label>Categoría</label>
+
+      <select id="gameCategory">
+        <option>Acción</option>
+        <option>Aventura</option>
+        <option>Terror</option>
+        <option>RPG</option>
+        <option>Plataformas</option>
+        <option>Puzzle</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea id="gameDescription"
+      placeholder="Describe tu juego..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Imagen de portada (URL)</label>
+
+      <input id="gameImage"
+      placeholder="https://ejemplo.com/imagen.jpg"
+      oninput="previewImage()">
+
+      <img id="imagePreview" class="preview">
+    </div>
+
+    <div class="form-group">
+      <label>Trailer (URL de YouTube)</label>
+
+      <input id="gameTrailer"
+      placeholder="https://www.youtube.com/watch?v=...">
+    </div>
+
+    <div class="form-group">
+      <label>Enlace para jugar</label>
+
+      <input id="gameLink"
+      placeholder="https://tu-juego.com">
+    </div>
+
+    <button class="btn primary"
+    style="width:100%"
+    onclick="publishGame()">
+      🚀 Publicar juego
+    </button>
+
+  </div>
+
+</div>
+
+<!-- DETALLES -->
+
+<div class="modal" id="detailsModal">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <h2>🎮 Juego</h2>
+      <button class="close"
+      onclick="closeModal('detailsModal')">×</button>
+    </div>
+
+    <div id="details"></div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const defaultGames = [
+
+{
+ id:1,
+ name:"Neon Runner",
+ creator:"PixelNova",
+ category:"Plataformas",
+ description:
+ "Corre por una ciudad futurista llena de obstáculos, saltos y secretos.",
+ image:
+ "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1000&q=80",
+ trailer:"",
+ link:"#",
+ likes:128,
+ comments:[
+   {user:"Alex",text:"¡El estilo visual está increíble!"},
+   {user:"Mia",text:"Necesito más niveles 🔥"}
+ ]
+},
+
+{
+ id:2,
+ name:"Dark Planet",
+ creator:"VoidStudio",
+ category:"Terror",
+ description:
+ "Explora un planeta abandonado donde las cosas no son lo que parecen.",
+ image:
+ "https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1000&q=80",
+ trailer:"",
+ link:"#",
+ likes:96,
+ comments:[
+   {user:"Leo",text:"Me dio miedo jugarlo de noche 😂"}
+ ]
+},
+
+{
+ id:3,
+ name:"Dragon Realm",
+ creator:"MoonDev",
+ category:"RPG",
+ description:
+ "Construye tu personaje, consigue armas y enfréntate a poderosos dragones.",
+ image:
+ "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1000&q=80",
+ trailer:"",
+ link:"#",
+ likes:214,
+ comments:[]
+},
+
+{
+ id:4,
+ name:"Cyber Strike",
+ creator:"ByteForge",
+ category:"Acción",
+ description:
+ "Combates rápidos en una arena futurista.",
+ image:
+ "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1000&q=80",
+ trailer:"",
+ link:"#",
+ likes:171,
+ comments:[]
+},
+
+{
+ id:5,
+ name:"Mystery Island",
+ creator:"DreamMaker",
+ category:"Aventura",
+ description:
+ "Una isla misteriosa, tesoros ocultos y muchos secretos.",
+ image:
+ "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80",
+ trailer:"",
+ link:"#",
+ likes:83,
+ comments:[]
+},
+
+{
+ id:6,
+ name:"Brain Lab",
+ creator:"MindGames",
+ category:"Puzzle",
+ description:
+ "Pon a prueba tu mente con decenas de acertijos.",
+ image:
+ "https://images.unsplash.com/photo-1611996575749-79a3a250f948?auto=format&fit=crop&w=1000&q=80",
+ trailer:"",
+ link:"#",
+ likes:64,
+ comments:[]
+}
+
+];
+
+let games = JSON.parse(localStorage.getItem("gameverse_games"));
+
+if(!games){
+  games = defaultGames;
+  saveGames();
+}
+
+let currentCategory = "Todos";
+
+function saveGames(){
+  localStorage.setItem("gameverse_games",JSON.stringify(games));
+}
+
+function renderGames(){
+
+  const container=document.getElementById("games");
+  const search=document.getElementById("searchInput").value.toLowerCase();
+
+  let filtered=games.filter(game=>{
+
+    const categoryMatch =
+      currentCategory==="Todos" ||
+      game.category===currentCategory;
+
+    const searchMatch =
+      game.name.toLowerCase().includes(search) ||
+      game.creator.toLowerCase().includes(search) ||
+      game.category.toLowerCase().includes(search);
+
+    return categoryMatch && searchMatch;
+  });
+
+  document.getElementById("gameCount").textContent =
+    filtered.length+" juegos";
+
+  if(filtered.length===0){
+
+    container.innerHTML=`
+      <div class="empty">
+        <div style="font-size:45px">🔎</div>
+        <h3>No encontramos juegos</h3>
+        <p style="margin-top:8px">
+          Prueba con otra búsqueda o publica el primero.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML=filtered.map(game=>`
+
+    <article class="card">
+
+      <div class="cover"
+      style="background-image:url('${escapeHtml(game.image)}')">
+
+        <button class="play"
+        onclick="openDetails(${game.id})">
+          ▶
+        </button>
+
+      </div>
+
+      <div class="card-body">
+
+        <div class="card-title">
+          ${escapeHtml(game.name)}
+        </div>
+
+        <div class="creator">
+          por ${escapeHtml(game.creator)}
+        </div>
+
+        <div class="tags">
+          <span class="tag">${escapeHtml(game.category)}</span>
+        </div>
+
+        <div class="card-bottom">
+
+          <span class="likes">
+            ❤️ ${game.likes}
+          </span>
+
+          <button class="btn"
+          onclick="openDetails(${game.id})">
+            Ver juego
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  `).join("");
+
+}
+
+function filterCategory(category,button){
+
+  currentCategory=category;
+
+  document.querySelectorAll(".category")
+  .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  renderGames();
+}
+
+document.getElementById("searchInput")
+.addEventListener("input",renderGames);
+
+function openPublish(){
+
+  document.getElementById("publishModal")
+  .classList.add("show");
+
+}
+
+function closeModal(id){
+
+  document.getElementById(id)
+  .classList.remove("show");
+
+}
+
+function previewImage(){
+
+  const url=document.getElementById("gameImage").value;
+  const img=document.getElementById("imagePreview");
+
+  if(url){
+
+    img.src=url;
+    img.style.display="block";
+
+  }else{
+
+    img.style.display="none";
+
+  }
+
+}
+
+function publishGame(){
+
+  const name=document.getElementById("gameName").value.trim();
+  const creator=document.getElementById("gameCreator").value.trim();
+  const category=document.getElementById("gameCategory").value;
+  const description=document.getElementById("gameDescription").value.trim();
+  const image=document.getElementById("gameImage").value.trim();
+  const trailer=document.getElementById("gameTrailer").value.trim();
+  const link=document.getElementById("gameLink").value.trim();
+
+  if(!name || !creator || !description){
+
+    showToast("Completa el nombre, creador y descripción.");
+
+    return;
+  }
+
+  const newGame={
+
+    id:Date.now(),
+
+    name:name,
+
+    creator:creator,
+
+    category:category,
+
+    description:description,
+
+    image:image ||
+    "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1000&q=80",
+
+    trailer:trailer,
+
+    link:link || "#",
+
+    likes:0,
+
+    comments:[]
+
+  };
+
+  games.unshift(newGame);
+
+  saveGames();
+
+  renderGames();
+
+  closeModal("publishModal");
+
+  clearForm();
+
+  showToast("🎉 ¡Tu juego fue publicado!");
+
+  scrollToGames();
+
+}
+
+function clearForm(){
+
+  [
+    "gameName",
+    "gameCreator",
+    "gameDescription",
+    "gameImage",
+    "gameTrailer",
+    "gameLink"
+  ].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+
+  document.getElementById("imagePreview")
+  .style.display="none";
+
+}
+
+function openDetails(id){
+
+  const game=games.find(g=>g.id===id);
+
+  if(!game)return;
+
+  let trailerHTML="";
+
+  if(game.trailer){
+
+    let videoId=getYoutubeId(game.trailer);
+
+    if(videoId){
+
+      trailerHTML=`
+        <iframe
+        class="trailer"
+        height="300"
+        src="https://www.youtube.com/embed/${videoId}"
+        frameborder="0"
+        allowfullscreen>
+        </iframe>
+      `;
+
+    }
+
+  }
+
+  const commentsHTML=
+
+    game.comments.length ?
+
+    game.comments.map(comment=>`
+
+      <div class="comment">
+        <strong>${escapeHtml(comment.user)}</strong>
+        <p>${escapeHtml(comment.text)}</p>
+      </div>
+
+    `).join("") :
+
+    `<p style="color:#777">Todavía no hay comentarios.</p>`;
+
+  document.getElementById("details").innerHTML=`
+
+    <img class="details-cover"
+    src="${escapeHtml(game.image)}">
+
+    <div class="details">
+
+      <h2>${escapeHtml(game.name)}</h2>
+
+      <div class="creator">
+        Creado por ${escapeHtml(game.creator)}
+        · ${escapeHtml(game.category)}
+      </div>
+
+      <p>${escapeHtml(game.description)}</p>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+
+        <button class="btn"
+        onclick="likeGame(${game.id})">
+          ❤️ ${game.likes}
+        </button>
+
+        ${
+          game.link && game.link!="#" ?
+
+          `<a class="btn primary"
+          href="${escapeHtml(game.link)}"
+          target="_blank"
+          style="text-decoration:none">
+          ▶ Jugar
+          </a>` : ""
+        }
+
+      </div>
+
+      ${trailerHTML}
+
+      <div class="comments">
+
+        <h3>💬 Comentarios</h3>
+
+        ${commentsHTML}
+
+        <div style="margin-top:15px">
+
+          <input
+          id="commentUser"
+          class="form-group"
+          style="width:100%;background:#090912;border:1px solid var(--border);color:white;border-radius:10px;padding:12px"
+          placeholder="Tu nombre">
+
+          <textarea
+          id="commentText"
+          style="width:100%;margin-top:8px;background:#090912;border:1px solid var(--border);color:white;border-radius:10px;padding:12px;min-height:80px"
+          placeholder="Escribe un comentario..."></textarea>
+
+          <button
+          class="btn primary"
+          style="margin-top:8px"
+          onclick="addComment(${game.id})">
+          Comentar
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  document.getElementById("detailsModal")
+  .classList.add("show");
+
+}
+
+function likeGame(id){
+
+  const game=games.find(g=>g.id===id);
+
+  if(!game)return;
+
+  game.likes++;
+
+  saveGames();
+
+  openDetails(id);
+
+  renderGames();
+
+}
+
+function addComment(id){
+
+  const user=document.getElementById("commentUser").value.trim();
+  const text=document.getElementById("commentText").value.trim();
+
+  if(!user || !text){
+
+    showToast("Escribe tu nombre y comentario.");
+
+    return;
+  }
+
+  const game=games.find(g=>g.id===id);
+
+  if(!game)return;
+
+  game.comments.push({
+    user:user,
+    text:text
+  });
+
+  saveGames();
+
+  openDetails(id);
+
+  showToast("💬 Comentario publicado.");
+
+}
+
+function getYoutubeId(url){
+
+  const patterns=[
+    /youtube\.com\/watch\?v=([^&]+)/,
+    /youtu\.be\/([^?]+)/,
+    /youtube\.com\/embed\/([^?]+)/
+  ];
+
+  for(const pattern of patterns){
+
+    const match=url.match(pattern);
+
+    if(match)return match[1];
+
+  }
+
+  return null;
+}
+
+function scrollToGames(){
+
+  document.getElementById("gamesSection")
+  .scrollIntoView({behavior:"smooth"});
+
+}
+
+function showToast(message){
+
+  const toast=document.getElementById("toast");
+
+  toast.textContent=message;
+
+  toast.classList.add("show");
+
+  setTimeout(()=>{
+    toast.classList.remove("show");
+  },3000);
+
+}
+
+function escapeHtml(text){
+
+  return String(text)
+  .replace(/&/g,"&amp;")
+  .replace(/</g,"&lt;")
+  .replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;")
+  .replace(/'/g,"&#039;");
+
+}
+
+window.addEventListener("click",function(e){
+
+  if(e.target.classList.contains("modal")){
+
+    e.target.classList.remove("show");
+
+  }
+
+});
+
+renderGames();
+
+</script>
+
+</body>
+</html>
